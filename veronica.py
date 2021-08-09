@@ -6,6 +6,7 @@ import pyaudio
 import wikipedia
 import webbrowser
 import os
+import smtplib
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -18,8 +19,9 @@ def speak(audio):
 
 
 def wishMe():
+    
     hour = int(datetime.datetime.now().hour)
-    if hour >= 0 and hour < 12:
+    if hour > 1 and hour < 12:
         speak("Good Morning!")
 
     elif hour >= 12 and hour < 18:
@@ -48,10 +50,20 @@ def takeCommand():  # input Voice
         return "None"
     return query
 
+def sendEmail(to, content):
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.ehlo()
+    server.starttls()
+    server.login('joker12345b@gmail.com', 'Joker@007')
+    server.sendmail('joker12345b@gmail.com', to, content)
+    server.close()
+
+
 
 if __name__ == "__main__":
     wishMe()
-    while True:
+    #while True:
+    if 1:
         query = takeCommand().lower()
 
         if 'wikipedia' in query:
@@ -77,3 +89,19 @@ if __name__ == "__main__":
         elif 'the time' in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
             speak(f"Sir, the time is {strTime}")
+
+        elif 'open spotify' in query:
+            codePath = "C:\\Users\\mrj\\AppData\\Roaming\\Spotify\\Spotify.exe"
+            os.startfile(codePath)
+
+        elif 'email to alex' in query:
+            try:
+                speak("What should I send?")
+                content = takeCommand()
+                to = "tusharwaghmare328@gmail.com"    
+                sendEmail(to, content)
+                speak("Email has been sent!")
+            except Exception as e:
+                print(e)
+                speak("Sorry, Sir, I am not able to send the email.")
+
